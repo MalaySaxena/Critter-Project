@@ -1,6 +1,6 @@
 package com.udacity.jdnd.course3.critter.models;
 
-import com.udacity.jdnd.course3.critter.user.EmployeeSkill;
+import com.udacity.jdnd.course3.critter.models.enums.EmployeeSkill;
 
 import javax.persistence.*;
 
