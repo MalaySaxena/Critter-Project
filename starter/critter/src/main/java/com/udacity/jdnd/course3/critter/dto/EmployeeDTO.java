@@ -10,16 +10,16 @@ import java.util.Set;
  * to the database directly.
  */
 public class EmployeeDTO {
-    private long id;
+    private Long id;
     private String name;
     private Set<EmployeeSkill> skills;
-    private Set<DayOfWeek> daysAvailable;
+    private Set<DayOfWeek> daysWorking;
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -39,11 +39,11 @@ public class EmployeeDTO {
         this.skills = skills;
     }
 
-    public Set<DayOfWeek> getDaysAvailable() {
-        return daysAvailable;
+    public Set<DayOfWeek> getDaysWorking() {
+        return daysWorking;
     }
 
-    public void setDaysAvailable(Set<DayOfWeek> daysAvailable) {
-        this.daysAvailable = daysAvailable;
+    public void setDaysWorking(Set<DayOfWeek> daysWorking) {
+        this.daysWorking = daysWorking;
     }
 }

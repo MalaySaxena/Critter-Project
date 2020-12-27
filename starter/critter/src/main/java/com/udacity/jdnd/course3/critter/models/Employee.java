@@ -14,21 +14,29 @@ public class Employee {
 
     @Id
     @GeneratedValue
-    private int id;
+    private Long id;
 
     private String name;
 
     @ElementCollection
     private Set<DayOfWeek> daysWorking;
 
+    public Employee() {
+    }
+
+    public Employee(String name, Set<EmployeeSkill> skills) {
+        this.name = name;
+        this.skills = skills;
+    }
+
     @ElementCollection
     private Set<EmployeeSkill> skills;
 
-    public int getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
