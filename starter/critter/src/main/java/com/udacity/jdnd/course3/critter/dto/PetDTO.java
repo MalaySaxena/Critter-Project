@@ -13,8 +13,18 @@ public class PetDTO {
     private PetType type;
     private String name;
     private long ownerId;
-    private LocalDate birthDate;
+    private LocalDate dateOfBirth;
     private String notes;
+
+    public PetDTO() {
+    }
+
+    public PetDTO(PetType type, String name, LocalDate birthDate, String notes) {
+        this.type = type;
+        this.name = name;
+        this.dateOfBirth = birthDate;
+        this.notes = notes;
+    }
 
     public PetType getType() {
         return type;
@@ -40,12 +50,12 @@ public class PetDTO {
         this.ownerId = ownerId;
     }
 
-    public LocalDate getBirthDate() {
-        return birthDate;
+    public LocalDate getDateOfBirth() {
+        return dateOfBirth;
     }
 
-    public void setBirthDate(LocalDate birthDate) {
-        this.birthDate = birthDate;
+    public void setDateOfBirth(LocalDate dateOfBirth) {
+        this.dateOfBirth = dateOfBirth;
     }
 
     public String getNotes() {

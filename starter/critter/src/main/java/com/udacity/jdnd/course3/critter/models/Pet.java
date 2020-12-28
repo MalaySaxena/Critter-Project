@@ -10,20 +10,31 @@ public class Pet {
 
     @Id
     @GeneratedValue
-    private int id;
+    private long id;
     private PetType type;
     private String name;
     private LocalDate dateOfBirth;
     private String notes;
 
+    public Pet(PetType type, String name, LocalDate dateOfBirth, String notes, Customer owner) {
+        this.type = type;
+        this.name = name;
+        this.dateOfBirth = dateOfBirth;
+        this.notes = notes;
+        this.owner = owner;
+    }
+
+    public Pet() {
+    }
+
     @ManyToOne
     private Customer owner;
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 

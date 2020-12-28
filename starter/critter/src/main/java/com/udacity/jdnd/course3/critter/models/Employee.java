@@ -24,8 +24,9 @@ public class Employee {
     public Employee() {
     }
 
-    public Employee(String name, Set<EmployeeSkill> skills) {
+    public Employee(String name, Set<DayOfWeek> daysWorking, Set<EmployeeSkill> skills) {
         this.name = name;
+        this.daysWorking = daysWorking;
         this.skills = skills;
     }
 
