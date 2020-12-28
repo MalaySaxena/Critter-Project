@@ -59,14 +59,29 @@ public class UserService {
         return customerDTOS;
     }
 
+    public CustomerDTO getCustomerByPet(Long id){
+        return customerToDTO(petService.getOwnerOfPet(id));
+    }
+
     public EmployeeDTO addNewEmployee(EmployeeDTO newEmployee){
         Employee employee = employeeRepository.save(new Employee(newEmployee.getName(), newEmployee.getDaysWorking(), newEmployee.getSkills()));
         return employeeToDTO(employee);
     }
 
-    public EmployeeDTO getEmployee(Long id){
+    public EmployeeDTO getEmployeeDTO(Long id){
+        return employeeToDTO(getEmployee(id));
+    }
+
+    public Employee getEmployee(Long id){
         Employee employee = employeeRepository.findById(id).get();
-        return employeeToDTO(employee);
+        return employee;
+    }
+
+    public List<Employee> getAllEmployeesById(List<Long> ids){
+        if(ids == null)
+            return null;
+        List<Employee> employeeList = (List<Employee>) employeeRepository.findAllById(ids);
+        return employeeList;
     }
 
     public void addEmployeesSchedule(Long id, Set<DayOfWeek> days){
@@ -81,31 +96,6 @@ public class UserService {
         }
 
         employeeRepository.save(employee);
-    }
-
-    private CustomerDTO customerToDTO(Customer customer){
-        CustomerDTO customerDTO = new CustomerDTO();
-        BeanUtils.copyProperties(customer,customerDTO);
-
-        if(customer.getPetList()!=null){
-            List<Pet> pets = customer.getPetList();
-            List<Long> petIds = new ArrayList<>();
-            for(int i=0;i<pets.size();i++){
-                petIds.add(pets.get(i).getId());
-            }
-
-            customerDTO.setPetIds(petIds);
-        }
-
-        return customerDTO;
-    }
-
-    private EmployeeDTO employeeToDTO(Employee employee){
-        EmployeeDTO employeeDTO = new EmployeeDTO();
-        BeanUtils.copyProperties(employee, employeeDTO);
-        //System.out.println(employee.getDaysWorking());
-        //System.out.println(employeeDTO.getDaysWorking());
-        return employeeDTO;
     }
 
     public List<EmployeeDTO> getEmployeesOnAvailability(LocalDate date, Set<EmployeeSkill> skills){
@@ -133,7 +123,26 @@ public class UserService {
         return availableEmployees;
     }
 
-    public CustomerDTO getCustomerByPet(Long id){
-        return customerToDTO(petService.getOwnerOfPet(id));
+    private CustomerDTO customerToDTO(Customer customer){
+        CustomerDTO customerDTO = new CustomerDTO();
+        BeanUtils.copyProperties(customer,customerDTO);
+
+        if(customer.getPetList()!=null){
+            List<Pet> pets = customer.getPetList();
+            List<Long> petIds = new ArrayList<>();
+            for(int i=0;i<pets.size();i++){
+                petIds.add(pets.get(i).getId());
+            }
+
+            customerDTO.setPetIds(petIds);
+        }
+
+        return customerDTO;
+    }
+
+    private EmployeeDTO employeeToDTO(Employee employee){
+        EmployeeDTO employeeDTO = new EmployeeDTO();
+        BeanUtils.copyProperties(employee, employeeDTO);
+        return employeeDTO;
     }
 }

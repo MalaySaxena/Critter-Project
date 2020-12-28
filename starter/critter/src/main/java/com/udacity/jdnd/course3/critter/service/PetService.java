@@ -28,19 +28,24 @@ public class PetService {
                         petDTO.getDateOfBirth(), petDTO.getNotes(), customer));
 
         List<Pet> petList = customer.getPetList();
+
         if(petList==null)
             petList = new ArrayList<>();
 
         petList.add(addedPet);
         customer.setPetList(petList);
-
         userService.addNewCustomer(customer);
+
         PetDTO petDTO1 = petToDTO(addedPet);
         return petDTO1;
     }
 
-    public PetDTO getPet(Long id){
-        return petToDTO(petRepository.findById(id).get());
+    public PetDTO getPetDTO(Long id){
+        return petToDTO(getPet(id));
+    }
+
+    public Pet getPet(Long id){
+        return petRepository.findById(id).get();
     }
 
     public List<PetDTO> getAllPets(){
@@ -52,6 +57,15 @@ public class PetService {
                 .collect(Collectors.toList());
 
         return allPets;
+    }
+
+    public List<Pet> getAllPetsByIds(List<Long> ids){
+        if(ids == null)
+            return null;
+
+        List<Pet> petList = (List<Pet>) petRepository.findAllById(ids);
+
+        return petList;
     }
 
     public List<PetDTO> getAllPetsOfOwner(Long id){

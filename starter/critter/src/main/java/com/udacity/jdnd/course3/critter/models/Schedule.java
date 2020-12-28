@@ -13,7 +13,7 @@ public class Schedule {
 
     @Id
     @GeneratedValue
-    private int id;
+    private Long id;
 
     @ManyToMany
     private List<Employee> employeeList;
@@ -23,14 +23,24 @@ public class Schedule {
 
     private LocalDate date;
 
+    public Schedule() {
+    }
+
+    public Schedule(List<Employee> employeeList, List<Pet> petList, LocalDate date, Set<EmployeeSkill> activities) {
+        this.employeeList = employeeList;
+        this.petList = petList;
+        this.date = date;
+        this.activities = activities;
+    }
+
     @ElementCollection
     private Set<EmployeeSkill> activities;
 
-    public int getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

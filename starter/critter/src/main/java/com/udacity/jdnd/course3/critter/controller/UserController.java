@@ -48,7 +48,7 @@ public class UserController {
 
     @GetMapping("/employee/{employeeId}")
     public EmployeeDTO getEmployee(@PathVariable long employeeId) {
-        return userService.getEmployee(employeeId);
+        return userService.getEmployeeDTO(employeeId);
     }
 
     @PutMapping("/employee/{employeeId}")
