@@ -26,38 +26,31 @@ public class ScheduleService {
         this.scheduleRepository = scheduleRepository;
     }
 
-    public ScheduleDTO addSchedule(ScheduleDTO scheduleDTO){
+    public Schedule addSchedule(ScheduleDTO scheduleDTO){
         List<Employee> employeesList = userService.getAllEmployeesById(scheduleDTO.getEmployeeIds());
         List<Pet> petList = petService.getAllPetsByIds(scheduleDTO.getPetIds());
 
         Schedule newSchedule = new Schedule(employeesList, petList, scheduleDTO.getDate(), scheduleDTO.getActivities());
         newSchedule = scheduleRepository.save(newSchedule);
-        return scheduleToDTO(newSchedule);
+        return newSchedule;
     }
 
-    public List<ScheduleDTO> getAllSchedules(){
+    public List<Schedule> getAllSchedules(){
         List<Schedule> allSchedules = (List<Schedule>)scheduleRepository.findAll();
-        List<ScheduleDTO> allSchedulesDTO = new ArrayList<>();
-
-        for(Schedule schedule:allSchedules){
-            allSchedulesDTO.add(scheduleToDTO(schedule));
-        }
-        return allSchedulesDTO;
+        return allSchedules;
     }
 
-    public List<ScheduleDTO> getAllSchedulesForPet(Long petId){
+    public List<Schedule> getAllSchedulesForPet(Long petId){
         List<Schedule> allSchedules = scheduleRepository.findAllByPetList(petService.getPet(petId));
-        List<ScheduleDTO> allSchedulesDTO = getAllSchedulesDTO(allSchedules);
-        return allSchedulesDTO;
+        return allSchedules;
     }
 
-    public List<ScheduleDTO> getAllSchedulesForEmployee(Long employeeId){
+    public List<Schedule> getAllSchedulesForEmployee(Long employeeId){
         List<Schedule> allSchedules = scheduleRepository.findAllByEmployeeList(userService.getEmployee(employeeId));
-        List<ScheduleDTO> allSchedulesDTO = getAllSchedulesDTO(allSchedules);
-        return allSchedulesDTO;
+        return allSchedules;
     }
 
-    public List<ScheduleDTO> getAllSchedulesForCustomer(Long customerId){
+    public List<Schedule> getAllSchedulesForCustomer(Long customerId){
         Customer customer = userService.getCustomer(customerId.intValue());
 
         List<Schedule> allSchedules = new ArrayList<>();
@@ -66,35 +59,7 @@ public class ScheduleService {
             allSchedules.addAll(scheduleRepository.findAllByPetList(pet));
         }
 
-        List<ScheduleDTO> allSchedulesDTO = getAllSchedulesDTO(allSchedules);
-        return allSchedulesDTO;
+        return allSchedules;
     }
 
-    private List<ScheduleDTO> getAllSchedulesDTO(List<Schedule> schedules){
-        List<ScheduleDTO> allSchedulesDTO = new ArrayList<>();
-
-        for(Schedule schedule:schedules){
-            allSchedulesDTO.add(scheduleToDTO(schedule));
-        }
-        return allSchedulesDTO;
-    }
-
-    private ScheduleDTO scheduleToDTO(Schedule schedule){
-        ScheduleDTO scheduleDTO = new ScheduleDTO();
-        BeanUtils.copyProperties(schedule, scheduleDTO);
-
-        List<Long> employeeIds = schedule.getEmployeeList()
-                .stream()
-                .map(employee -> employee.getId())
-                .collect(Collectors.toList());
-
-        List<Long> petIds = schedule.getPetList()
-                .stream()
-                .map(pet -> pet.getId())
-                .collect(Collectors.toList());
-        scheduleDTO.setEmployeeIds(employeeIds);
-        scheduleDTO.setPetIds(petIds);
-
-        return scheduleDTO;
-    }
 }

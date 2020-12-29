@@ -22,7 +22,7 @@ public class PetService {
         this.userService = userService;
     }
 
-    public PetDTO addNewPet(PetDTO petDTO){
+    public Pet addNewPet(PetDTO petDTO){
         Customer customer = userService.getCustomer((int)petDTO.getOwnerId());
         Pet addedPet = petRepository.save(new Pet(petDTO.getType(), petDTO.getName(),
                         petDTO.getDateOfBirth(), petDTO.getNotes(), customer));
@@ -36,27 +36,20 @@ public class PetService {
         customer.setPetList(petList);
         userService.addNewCustomer(customer);
 
-        PetDTO petDTO1 = petToDTO(addedPet);
-        return petDTO1;
+        return addedPet;
     }
 
-    public PetDTO getPetDTO(Long id){
-        return petToDTO(getPet(id));
+    public Pet getPetDTO(Long id){
+        return getPet(id);
     }
 
     public Pet getPet(Long id){
         return petRepository.findById(id).get();
     }
 
-    public List<PetDTO> getAllPets(){
+    public List<Pet> getAllPets(){
         List<Pet> petList = (List<Pet>) petRepository.findAll();
-
-        List<PetDTO> allPets = petList
-                .stream()
-                .map(pet -> petToDTO(pet))
-                .collect(Collectors.toList());
-
-        return allPets;
+        return petList;
     }
 
     public List<Pet> getAllPetsByIds(List<Long> ids){
@@ -68,31 +61,15 @@ public class PetService {
         return petList;
     }
 
-    public List<PetDTO> getAllPetsOfOwner(Long id){
+    public List<Pet> getAllPetsOfOwner(Long id){
         Customer owner = userService.getCustomer(id.intValue());
-
         List<Pet> ownedPets = petRepository.findAllByOwner(owner);
-
-        List<PetDTO> petDTOList = new ArrayList<>();
-
-        for(Pet pet:ownedPets){
-            PetDTO petDTO = petToDTO(pet);
-            petDTO.setOwnerId(pet.getOwner().getId());
-            petDTOList.add(petDTO);
-        }
-        return petDTOList;
+        return ownedPets;
     }
 
     public Customer getOwnerOfPet(Long id){
         Pet pet = petRepository.findById(id).get();
         return pet.getOwner();
-    }
-
-    private PetDTO petToDTO(Pet pet) {
-        PetDTO petDTO = new PetDTO();
-        BeanUtils.copyProperties(pet, petDTO);
-        petDTO.setOwnerId(pet.getOwner().getId());
-        return petDTO;
     }
 
 }

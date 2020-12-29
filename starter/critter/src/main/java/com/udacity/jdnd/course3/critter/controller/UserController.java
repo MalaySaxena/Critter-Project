@@ -3,10 +3,17 @@ package com.udacity.jdnd.course3.critter.controller;
 import com.udacity.jdnd.course3.critter.dto.CustomerDTO;
 import com.udacity.jdnd.course3.critter.dto.EmployeeDTO;
 import com.udacity.jdnd.course3.critter.dto.EmployeeRequestDTO;
+import com.udacity.jdnd.course3.critter.models.Customer;
+import com.udacity.jdnd.course3.critter.models.Employee;
+import com.udacity.jdnd.course3.critter.models.Pet;
+import com.udacity.jdnd.course3.critter.models.enums.EmployeeSkill;
 import com.udacity.jdnd.course3.critter.service.UserService;
+import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.DayOfWeek;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -28,27 +35,32 @@ public class UserController {
 
     @PostMapping("/customer")
     public CustomerDTO saveCustomer(@RequestBody CustomerDTO customerDTO){
-        return userService.addNewCustomer(customerDTO);
+        return customerToDTO(userService.addNewCustomer(customerDTO));
     }
 
     @GetMapping("/customer")
     public List<CustomerDTO> getAllCustomers(){
-        return userService.getAllCustomers();
+        List<CustomerDTO> customerDTOS = new ArrayList<>();
+        List<Customer> customerList = userService.getAllCustomers();
+        for(Customer customer:customerList){
+            customerDTOS.add(customerToDTO(customer));
+        }
+        return customerDTOS;
     }
 
     @GetMapping("/customer/pet/{petId}")
     public CustomerDTO getOwnerByPet(@PathVariable long petId){
-        return userService.getCustomerByPet(petId);
+        return customerToDTO(userService.getCustomerByPet(petId));
     }
 
     @PostMapping("/employee")
     public EmployeeDTO saveEmployee(@RequestBody EmployeeDTO employeeDTO) {
-        return userService.addNewEmployee(employeeDTO);
+        return employeeToDTO(userService.addNewEmployee(employeeDTO));
     }
 
     @GetMapping("/employee/{employeeId}")
     public EmployeeDTO getEmployee(@PathVariable long employeeId) {
-        return userService.getEmployeeDTO(employeeId);
+        return employeeToDTO(userService.getEmployeeDTO(employeeId));
     }
 
     @PutMapping("/employee/{employeeId}")
@@ -58,7 +70,54 @@ public class UserController {
 
     @GetMapping("/employee/availability")
     public List<EmployeeDTO> findEmployeesForService(@RequestBody EmployeeRequestDTO employeeDTO) {
-        return userService.getEmployeesOnAvailability(employeeDTO.getDate(), employeeDTO.getSkills());
+
+        DayOfWeek day = employeeDTO.getDate().getDayOfWeek();
+        Set<EmployeeSkill> skills = employeeDTO.getSkills();
+
+        List<Employee> employees = userService.getEmployeesOnAvailability();
+
+        List<EmployeeDTO> availableEmployees = new ArrayList<>();
+
+        for(Employee employee:employees){
+            //System.out.println(employee.getDaysWorking());
+
+            if(employee.getSkills()==null&&!skills.isEmpty()){
+                continue;
+            }
+
+            if(employee.getDaysWorking()==null){
+                continue;
+            }
+
+            if(employee.getSkills().containsAll(skills)&&employee.getDaysWorking().contains(day)){
+                availableEmployees.add(employeeToDTO(employee));
+            }
+
+        }
+        return availableEmployees;
+    }
+
+    private CustomerDTO customerToDTO(Customer customer){
+        CustomerDTO customerDTO = new CustomerDTO();
+        BeanUtils.copyProperties(customer,customerDTO);
+
+        if(customer.getPetList()!=null){
+            List<Pet> pets = customer.getPetList();
+            List<Long> petIds = new ArrayList<>();
+            for(int i=0;i<pets.size();i++){
+                petIds.add(pets.get(i).getId());
+            }
+
+            customerDTO.setPetIds(petIds);
+        }
+
+        return customerDTO;
+    }
+
+    private EmployeeDTO employeeToDTO(Employee employee){
+        EmployeeDTO employeeDTO = new EmployeeDTO();
+        BeanUtils.copyProperties(employee, employeeDTO);
+        return employeeDTO;
     }
 
 }
